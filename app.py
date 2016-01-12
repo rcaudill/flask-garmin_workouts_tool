@@ -88,11 +88,8 @@ def download(workoutId):
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    if create_workout(session['garmin_session'], request.form['workout_json']):
-        flash('Successfully uploaded')
-    else:
-        flash('Upload Failed')
-    
+    create_workout(session['garmin_session'], request.form['workout_json'])
+    flash('Successfully uploaded')
     return redirect(url_for('index'))
 
 @app.route('/delete/<workoutId>')
@@ -104,8 +101,8 @@ def delete(workoutId):
 # Run
 if __name__ == '__main__':
     app.run(
-        debug = True,
+        debug = False,
         host = "0.0.0.0",
-        port = 8080
+        port = 80
     )
 

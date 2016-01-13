@@ -28,6 +28,10 @@
         padding-left: 6px;
         float: right;
       }
+      .header p {
+        padding-left: 6px;
+        float: right;
+      }
 
       .footer {
         padding-top: 19px;
@@ -64,8 +68,12 @@
   <body>
      <div class="container">
       <div class="header">
-        <a href="/logout">Logout</a>
-        <a href="/login">Login</a>
+        {% if 'garmin_session' in session and session['garmin_session'] is not none %}
+          <a href="/logout">Logout</a>
+          <p>[{{ session['garmin_session'].get_email() }}]</p>
+        {% else %}
+          <a href="/login">Login</a>
+        {% endif %}
         <h3 class="text-muted">Garmin Workout Tool</h3>
       </div>
 

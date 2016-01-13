@@ -1,7 +1,6 @@
 from __future__ import print_function # In python 2.7
 import sys
 from flask import Flask, session, render_template, request, flash, redirect, url_for
-from garmin_session import get_session, get_workouts, get_workout_string, create_workout, delete_workout
 from flask.ext.session import Session
 import json
 from datetime import timedelta
@@ -10,6 +9,7 @@ import tempfile
 import StringIO
 from wtforms import Form, TextField, TextAreaField
 import logging
+from garmin_service import *
 
 class UploadForm(Form):
     workout_json = TextAreaField('Workout JSON')
@@ -37,7 +37,7 @@ def index():
         return redirect(url_for('login'))
     else:
         # garmin connect session is good, get workout list
-        result = get_workouts(session['garmin_session'])
+        result = session['garmin_session'].get_workouts()
         json_obj = json.loads(result)
         
         upload_form = UploadForm()
@@ -48,7 +48,7 @@ def index():
 def login():
     if request.method == 'POST':
 
-        session['garmin_session'] = get_session(request.form['username'], request.form['password'])
+        session['garmin_session'] = GarminService(request.form['username'], request.form['password'])
         
         if 'garmin_session' in session and session['garmin_session'] is not None:
             # Login successfully, flash message
@@ -59,7 +59,7 @@ def login():
             flash('Invalid credentials')
 
     if 'garmin_session' in session and session['garmin_session'] is not None:
-        flash('No need to login again, you already have a Garmin Connect session open. (SEE IF YOU CAN DISPLAY THE USERNAME HERE)')
+        flash('['+session['garmin_session'].get_email()+'] Garmin Connect session already open')
         return redirect(url_for('index'))
     return render_template('login.html')
 
@@ -77,7 +77,7 @@ def download(workoutId):
     #create tempfile and send to client
     temp = tempfile.NamedTemporaryFile()
     try:
-        temp.write(get_workout_string(session['garmin_session'], workoutId))
+        temp.write(session['garmin_session'].get_workout_string(workoutId=workoutId))
         temp.seek(0)
     finally:
         return send_file(temp.name, attachment_filename=workoutId+".json", as_attachment=True)
@@ -89,13 +89,13 @@ def download(workoutId):
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    create_workout(session['garmin_session'], request.form['workout_json'])
+    session['garmin_session'].create_workout(json_str=request.form['workout_json'])
     flash('Successfully uploaded')
     return redirect(url_for('index'))
 
 @app.route('/delete/<workoutId>')
 def delete(workoutId):
-    delete_workout(session['garmin_session'], workoutId)
+    session['garmin_session'].delete_workout(workoutId=workoutId)
     flash('Workout '+workoutId+' deleted')
     return redirect(url_for('index'))
 

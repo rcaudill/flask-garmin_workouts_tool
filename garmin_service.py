@@ -5,7 +5,7 @@ import re
 
 import requests
 
-gc = GarminService("rcaudill@gmail.com", "qwe123$%^")
+gc = GarminService("rcaudill@gmail.com", "")
 print gc.get_workouts
 
 #THIS NEEDS LOTS OF ERROR CHECKING!!!!

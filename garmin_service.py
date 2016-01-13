@@ -5,8 +5,6 @@ import re
 
 import requests
 
-gc = GarminService("rcaudill@gmail.com", "")
-print gc.get_workouts
 
 #THIS NEEDS LOTS OF ERROR CHECKING!!!!
 class GarminService:
@@ -63,6 +61,5 @@ class GarminService:
     def delete_workout(self, workoutId):
         return self.session.delete("https://connect.garmin.com/proxy/workout-service-1.0/json/deleteWorkout/" + workoutId).text
         
-
-
-
+gc = GarminService("rcaudill@gmail.com", "")
+print gc.get_workouts()

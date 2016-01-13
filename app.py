@@ -9,6 +9,7 @@ from flask import send_file
 import tempfile
 import StringIO
 from wtforms import Form, TextField, TextAreaField
+import logging
 
 class UploadForm(Form):
     workout_json = TextAreaField('Workout JSON')
@@ -100,6 +101,7 @@ def delete(workoutId):
 
 # Run
 if __name__ == '__main__':
+    logging.basicConfig(filename='error.log',level=logging.DEBUG)
     app.run(
         debug = False,
         host = "0.0.0.0",

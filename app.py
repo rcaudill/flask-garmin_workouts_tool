@@ -1,14 +1,13 @@
 from __future__ import print_function # In python 2.7
-import sys
-from flask import Flask, session, render_template, request, flash, redirect, url_for
-from flask.ext.session import Session
-import json
-from datetime import timedelta
-from flask import send_file
+
 import tempfile
-import StringIO
-from wtforms import Form, TextField, TextAreaField
-import logging
+from datetime import timedelta
+
+from flask import Flask, session, render_template, request, flash, redirect, url_for
+from flask import send_file
+from flask.ext.session import Session
+from wtforms import Form, TextAreaField
+
 from garmin_service import *
 
 class UploadForm(Form):
@@ -101,10 +100,10 @@ def delete(workoutId):
 
 # Run
 if __name__ == '__main__':
-    logging.basicConfig(filename='error.log',level=logging.DEBUG)
+    #logging.basicConfig(filename='error.log',level=logging.DEBUG)
     app.run(
-        debug = False,
+        debug = True,
         host = "0.0.0.0",
-        port = 80
+        port = 8080
     )
 

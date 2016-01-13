@@ -1,15 +1,12 @@
 #!/usr/bin/python
 
-import requests
 import json
-import urllib
-import cgi
 import re
-import shutil
-from shutil import copyfileobj
-import sys
-import Cookie
-import os
+
+import requests
+
+gc = GarminService("rcaudill@gmail.com", "qwe123$%^")
+print gc.get_workouts
 
 #THIS NEEDS LOTS OF ERROR CHECKING!!!!
 class GarminService:

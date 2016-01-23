@@ -1,17 +1,24 @@
-from __future__ import print_function # In python 2.7
-
 import tempfile
-from datetime import timedelta
+from datetime import timedelta, date
 
 from flask import Flask, session, render_template, request, flash, redirect, url_for
 from flask import send_file
 from flask.ext.session import Session
-from wtforms import Form, TextAreaField
+from wtforms import Form, TextAreaField, validators
+from wtforms_html5 import DateField, IntegerField, DateRange
 
 from garmin_service import *
 
+
 class UploadForm(Form):
     workout_json = TextAreaField('Workout JSON')
+
+
+class GeneratePlanForm(Form):
+    cts_heart_rate = IntegerField('CTS Test Heart Rate', [
+        validators.NumberRange(min=120, max=200, message='Heart rate average must be betweek 100 and 200')])
+    start_date = DateField('Plan Start Date',
+                           validators=[validators.DataRequired(), DateRange(date(2016, 1, 1), date(2017, 1, 1))])
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -19,9 +26,6 @@ app = Flask(__name__)
 SESSION_TYPE = 'filesystem'
 app.config.from_object(__name__)
 Session(app)
-
-# Set session secret key
-app.secret_key = 'some_secret'
 
 # Set the timeout for our session to 10 minuntes
 app.permanent_session_lifetime = timedelta(minutes=10)
@@ -88,8 +92,7 @@ def download(workoutId):
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    session['garmin_session'].create_workout(json_str=request.form['workout_json'])
-    flash('Successfully uploaded')
+    flash('Successfully uploaded: ' + session['garmin_session'].create_workout(json_str=request.form['workout_json']))
     return redirect(url_for('index'))
 
 @app.route('/delete/<workoutId>')
@@ -97,6 +100,16 @@ def delete(workoutId):
     session['garmin_session'].delete_workout(workoutId=workoutId)
     flash('Workout '+workoutId+' deleted')
     return redirect(url_for('index'))
+
+
+@app.route('/generateplan', methods=['GET', 'POST'])
+def generateplan():
+    generate_plan_form = GeneratePlanForm()
+    if request.method == 'POST' and generate_plan_form.validate():
+        flash('Workout plan submitted')
+        return redirect(url_for('index'))
+
+    return render_template('generateplan.html', generate_plan_form=generate_plan_form)
 
 # Run
 if __name__ == '__main__':

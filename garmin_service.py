@@ -55,11 +55,24 @@ class GarminService:
 
     def create_workout(self, json_str):
         json_str = json.dumps(json.loads(json_str), separators=(',', ':'))
-        payload = {'data':json_str}    
-        return self.session.post("https://connect.garmin.com/proxy/workout-service-1.0/json/createWorkout", headers={"content-type":"application/x-www-form-urlencoded"}, params=payload)
+        payload = {'data':json_str}
+        return self.session.post("https://connect.garmin.com/proxy/workout-service-1.0/json/createWorkout",
+                                 headers={"content-type": "application/x-www-form-urlencoded"}, params=payload).text
 
     def delete_workout(self, workoutId):
         return self.session.delete("https://connect.garmin.com/proxy/workout-service-1.0/json/deleteWorkout/" + workoutId).text
+
+    def exportSchedule(self, startCalendarDate, endCalendarDate="", timeZoneOffset="0", includeTP="",
+                       personalizerContext=""):
+        payload = {'startCalendarDate': startCalendarDate, \
+                   'endCalendarDate': endCalendarDate, \
+                   'timeZoneOffset': timeZoneOffset, \
+                   'includeTP': includeTP, \
+                   # 'personalizerContext':personalizerContext
+                   }
+        return self.session.get("https://connect.garmin.com/proxy/workout-service-1.0/json/exportSchedule",
+                                params=payload).text
         
-gc = GarminService("rcaudill@gmail.com", "")
-print gc.get_workouts()
+        # gc = GarminService("rcaudill@gmail.com", "")
+        # print gc.get_workouts()
+        #print gc.exportSchedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25")

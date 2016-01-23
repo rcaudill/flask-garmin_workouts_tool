@@ -1,0 +1,21 @@
+<!-- Extend layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+<!--Update navbar-->
+<script>document.getElementById("plan").className = "Active";</script>
+
+<h3>Generate a Workout Plan</h3>
+<div class="col-lg-12">
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" action="{{ url_for('generateplan') }}">
+        {{ render_field(generate_plan_form.cts_heart_rate) }}
+        {{ render_field(generate_plan_form.start_date) }}
+        <br>
+        <input type="submit" value="Submit"/>
+
+    </form>
+
+</div>
+
+{% endblock %}

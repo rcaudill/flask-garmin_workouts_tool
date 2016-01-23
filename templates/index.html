@@ -2,6 +2,9 @@
 {% extends "layout.html" %}
 
 {% block body %}
+<!--Update navbar-->
+<script>document.getElementById("view").className = "Active";</script>
+
   <h3>Workout List</h3>
   <div class="col-lg-12">
       {% for i in json_obj['com.garmin.connect.workout.dto.BaseUserWorkoutListDto']['baseUserWorkouts'] %}
@@ -32,8 +35,8 @@
       </form>
 
   </div>
-  
-  <script>
+
+<script>
     function onFileSelected(event) {
     var selectedFile = event.target.files[0];
     var reader = new FileReader();
@@ -67,4 +70,5 @@
     show(document.getElementById('workout-list-json-field'));
     });
   </script>
+
 {% endblock %}

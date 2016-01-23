@@ -19,6 +19,11 @@ class GeneratePlanForm(Form):
     start_date = DateField('Plan Start Date',
                            validators=[validators.DataRequired(), DateRange(date(2016, 1, 1), date(2017, 1, 1))])
 
+
+class ScheduledWorkoutsForm(Form):
+    start_date = DateField('Start Date')
+    end_date = DateField('Finish Date')
+
 # Initialize the Flask application
 app = Flask(__name__)
 # Check Configuration section for more details
@@ -124,6 +129,27 @@ def generateplan():
         return redirect(url_for('index'))
 
     return render_template('generateplan.html', generate_plan_form=generate_plan_form)
+
+
+@app.route('/scheduledworkouts', methods=['GET', 'POST'])
+def scheduledworkouts():
+    if 'garmin_session' not in session or session['garmin_session'] is None:
+        # No garmin connect session, redirect to login
+        flash('You need to enter Garmin Connect credentials in order to view scheduled workouts')
+        return redirect(url_for('login'))
+
+    result = ""
+    json_obj = ""
+
+    scheduled_workouts_form = ScheduledWorkoutsForm()
+    if request.method == 'POST' and scheduled_workouts_form.validate():
+        flash('DISPLAY FILTERED LIST')
+        return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
+                               result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
+
+    flash('DISPLAY FULL LIST')
+    return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
+                           result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
 
 # Run
 if __name__ == '__main__':

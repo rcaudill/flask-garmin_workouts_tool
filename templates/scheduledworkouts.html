@@ -1,0 +1,21 @@
+<!-- Extend layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+<!--Update navbar-->
+<script>document.getElementById("scheduled").className += "Active";</script>
+
+<h3>Scheduled Workouts</h3>
+<div class="col-lg-12">
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" action="{{ url_for('scheduledworkouts') }}">
+        {{ render_field(scheduled_workouts_form.start_date) }}
+        {{ render_field(scheduled_workouts_form.end_date) }}
+        <br>
+        <input type="submit" value="Submit"/>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -8,9 +8,14 @@
       <style>
       
       body {
-        padding-top: 20px;
+          padding-top: 60px;
         padding-bottom: 20px;
       }
+          @media (max-width: 979px) {
+          body {
+          padding-top: 0px;
+          }
+          }
 
       .header,
       .footer {
@@ -37,7 +42,7 @@
       }
 
       .footer {
-        padding-top: 19px;
+          padding-top: 40px;
         color: #777;
         border-top: 1px solid #e5e5e5;
       }
@@ -77,13 +82,13 @@
               <a class="navbar-brand" href="../">Garmin Connect Workout Tool</a>
           </div>
           <ul class="nav navbar-nav">
-              <li id="view"><a href="../">View</a></li>
-              <li id="upload"><a href="../">Upload</a></li>
-              <li class="dropdown">
+              <li id="view"><a href="/">View</a></li>
+              <li id="upload"><a href="upload">Upload</a></li>
+              <li id="plan" class="dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Create a Workout Plan
                       <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                      <li id="plan"><a href="generateplan">Cycling - CTS</a></li>
+                      <li><a href="generateplan">Cycling - CTS</a></li>
                       <li><a href="#">Other 1</a></li>
                       <li><a href="#">Other 2</a></li>
                   </ul>
@@ -103,16 +108,7 @@
 
 
   <div class="container">
-      <div class="header">
-        {% if 'garmin_session' in session and session['garmin_session'] is not none %}
-          <a href="/logout">Logout</a>
-          <p>[{{ session['garmin_session'].get_email() }}]</p>
-        {% else %}
-          <a href="/login">Login</a>
-        {% endif %}
-          <a href="/generateplan">Generate a Workout Plan</a>
-        <h3 class="text-muted">Garmin Workout Tool</h3>
-      </div>
+      <!--<div class="header"></div>-->
 
       <!-- Display flashed messages -->
       {% with msgs = get_flashed_messages() %}

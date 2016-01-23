@@ -13,7 +13,6 @@ from garmin_service import *
 class UploadForm(Form):
     workout_json = TextAreaField('Workout JSON')
 
-
 class GeneratePlanForm(Form):
     cts_heart_rate = IntegerField('CTS Test Heart Rate', [
         validators.NumberRange(min=120, max=200, message='Heart rate average must be betweek 100 and 200')])
@@ -42,10 +41,8 @@ def index():
         # garmin connect session is good, get workout list
         result = session['garmin_session'].get_workouts()
         json_obj = json.loads(result)
-        
-        upload_form = UploadForm()
 
-        return render_template('index.html', result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj, upload_form=upload_form)
+        return render_template('index.html', result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -90,10 +87,22 @@ def download(workoutId):
     #this is never reached... okay for now, figure out how to refresh index later.
     return render_template('index.html')
 
-@app.route('/upload', methods=['POST'])
+
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    flash('Successfully uploaded: ' + session['garmin_session'].create_workout(json_str=request.form['workout_json']))
-    return redirect(url_for('index'))
+    if 'garmin_session' not in session or session['garmin_session'] is None:
+        # No garmin connect session, redirect to login
+        flash('You need to enter Garmin Connect credentials in order to upload a workout')
+        return redirect(url_for('login'))
+
+    upload_form = UploadForm()
+    if request.method == 'POST' and upload_form.validate():
+        flash(
+                'Successfully uploaded: ' + session['garmin_session'].create_workout(
+                    json_str=request.form['workout_json']))
+        return redirect(url_for('index'))
+
+    return render_template('upload.html', upload_form=upload_form)
 
 @app.route('/delete/<workoutId>')
 def delete(workoutId):
@@ -104,6 +113,11 @@ def delete(workoutId):
 
 @app.route('/generateplan', methods=['GET', 'POST'])
 def generateplan():
+    if 'garmin_session' not in session or session['garmin_session'] is None:
+        # No garmin connect session, redirect to login
+        flash('You need to enter Garmin Connect credentials in order to create a workout plan')
+        return redirect(url_for('login'))
+
     generate_plan_form = GeneratePlanForm()
     if request.method == 'POST' and generate_plan_form.validate():
         flash('Workout plan submitted')

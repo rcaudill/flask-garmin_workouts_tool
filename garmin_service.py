@@ -64,15 +64,15 @@ class GarminService:
 
     def exportSchedule(self, startCalendarDate, endCalendarDate="", timeZoneOffset="0", includeTP="",
                        personalizerContext=""):
-        payload = {'startCalendarDate': startCalendarDate, \
-                   'endCalendarDate': endCalendarDate, \
-                   'timeZoneOffset': timeZoneOffset, \
-                   'includeTP': includeTP, \
+        payload = {'startCalendarDate': startCalendarDate,
+                   'endCalendarDate': endCalendarDate,
+                   'timeZoneOffset': timeZoneOffset,
+                   'includeTP': includeTP,
                    # 'personalizerContext':personalizerContext
                    }
         return self.session.get("https://connect.garmin.com/proxy/workout-service-1.0/json/exportSchedule",
                                 params=payload).text
-        
+
         # gc = GarminService("rcaudill@gmail.com", "")
         # print gc.get_workouts()
         #print gc.exportSchedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25")

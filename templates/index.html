@@ -3,7 +3,7 @@
 
 {% block body %}
 <!--Update navbar-->
-<script>document.getElementById("view").className = "Active";</script>
+<script>document.getElementById("view").className += "Active";</script>
 
   <h3>Workout List</h3>
   <div class="col-lg-12">
@@ -19,56 +19,6 @@
         <textarea name='result' rows='20' cols='80'>{{result}}</textarea>
       </div>
   </div>
-  
-  <h3>Upload a Workout</h3>
-  <div class="col-lg-12">
-      <input type="file" onchange="onFileSelected(event)">
-      
-      <form method="POST" action="{{ url_for('upload') }}">
-        <div id='edit_field'>
-          {{ upload_form.workout_json.label }} - Edit if desired
-          <br>
-          {{ upload_form.workout_json(cols="80", rows="20") }}
-          <br>
-          <input type="submit" value="Submit"/>
-        </div>
-      </form>
 
-  </div>
-
-<script>
-    function onFileSelected(event) {
-    var selectedFile = event.target.files[0];
-    var reader = new FileReader();
-    var result = document.getElementById("workout_json");
-    reader.onload = function(event) {
-      result.innerHTML = event.target.result;
-      result.rows = "20";
-      result.cols = "80";
-    };
-    reader.readAsText(selectedFile);
-    
-    show(document.getElementById('edit_field'));
-    }
-    function hide (elements) {
-      elements = elements.length ? elements : [elements];
-      for (var index = 0; index < elements.length; index++) {
-        elements[index].style.display = 'none';
-      }
-    }
-    function show (elements, specifiedDisplay) {
-      elements = elements.length ? elements : [elements];
-      for (var index = 0; index < elements.length; index++) {
-        elements[index].style.display = specifiedDisplay || 'block';
-      }
-    }
-
-    window.onload = hide(document.getElementById('edit_field'));
-    window.onload = hide(document.getElementById('workout-list-json-field'));
-
-    document.getElementById('show-workout-list-json').addEventListener('click', function () {
-    show(document.getElementById('workout-list-json-field'));
-    });
-  </script>
-
+<script src="{{ url_for('static', filename='text-area-helpers.js') }}"></script>
 {% endblock %}

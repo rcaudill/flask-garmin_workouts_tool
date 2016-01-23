@@ -1,0 +1,24 @@
+<!-- Extend layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+<!--Update navbar-->
+<script>document.getElementById("upload").className += "Active";</script>
+
+<h3>Upload a Workout</h3>
+<div class="col-lg-12">
+    <input type="file" onchange="onFileSelected(event)">
+
+    <form method="POST" action="{{ url_for('upload') }}">
+        <div id='edit_field'>
+            {{ upload_form.workout_json.label }} - Edit workout if desired
+            <br>
+            {{ upload_form.workout_json(cols="80", rows="20") }}
+            <br>
+            <input type="submit" value="Submit"/>
+        </div>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='text-area-helpers.js') }}"></script>
+{% endblock %}

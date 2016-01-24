@@ -12,10 +12,22 @@
         {{ render_field(scheduled_workouts_form.start_date) }}
         {{ render_field(scheduled_workouts_form.end_date) }}
         <br>
-        <input type="submit" value="Submit"/>
-
+        <input type="submit" value="Filter by Date"/>
     </form>
 
+    {% for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList'] %}
+    {{i['ExportableWorkoutSchedule']['calendarDate'].encode('ascii', 'ignore').decode('ascii')}},
+    {{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii', 'ignore').decode('ascii')}},
+    ({{i['ExportableWorkoutSchedule']['workoutId'].encode('ascii', 'ignore').decode('ascii')}})
+    <br>
+    {% endfor %}
+    <br>
+    <button id="show-schedule-json">Show Workout List JSON</button>
+    <div id="schedule-json-field">
+        <textarea name='result' rows='20' cols='80'>{{result}}</textarea>
+    </div>
 </div>
+
+<script src="{{ url_for('static', filename='text-area-helpers.js') }}"></script>
 
 {% endblock %}

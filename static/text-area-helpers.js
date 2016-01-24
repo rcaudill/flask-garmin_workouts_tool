@@ -30,10 +30,18 @@
 
     window.onload = hide(document.getElementById('edit_field'));
     window.onload = hide(document.getElementById('workout-list-json-field'));
+    window.onload = hide(document.getElementById('schedule-json-field'));
 
     var idshowworkoutlistjson = document.getElementById('show-workout-list-json');
     if (idshowworkoutlistjson != null) {
         idshowworkoutlistjson.addEventListener('click', function () {
             show(document.getElementById('workout-list-json-field'));
+        });
+    }
+
+    var idshowschedulejson = document.getElementById('show-schedule-json');
+    if (idshowschedulejson != null) {
+        idshowschedulejson.addEventListener('click', function () {
+            show(document.getElementById('schedule-json-field'));
         });
     }

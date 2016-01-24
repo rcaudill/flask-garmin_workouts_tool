@@ -62,8 +62,8 @@ class GarminService:
     def delete_workout(self, workoutId):
         return self.session.delete("https://connect.garmin.com/proxy/workout-service-1.0/json/deleteWorkout/" + workoutId).text
 
-    def exportSchedule(self, startCalendarDate, endCalendarDate="", timeZoneOffset="0", includeTP="",
-                       personalizerContext=""):
+    def get_schedule(self, startCalendarDate="2016-01-01", endCalendarDate="", timeZoneOffset="0", includeTP="",
+                     personalizerContext=""):
         payload = {'startCalendarDate': startCalendarDate,
                    'endCalendarDate': endCalendarDate,
                    'timeZoneOffset': timeZoneOffset,
@@ -73,6 +73,6 @@ class GarminService:
         return self.session.get("https://connect.garmin.com/proxy/workout-service-1.0/json/exportSchedule",
                                 params=payload).text
 
-        # gc = GarminService("rcaudill@gmail.com", "")
-        # print gc.get_workouts()
-        #print gc.exportSchedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25")
+# gc = GarminService("rcaudill@gmail.com", "")
+# print gc.get_workouts()
+# print gc.get_schedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25")

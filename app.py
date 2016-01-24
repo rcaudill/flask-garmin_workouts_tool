@@ -1,3 +1,5 @@
+from __future__ import print_function  # In python 2.7
+
 import tempfile
 from datetime import timedelta, date
 
@@ -77,15 +79,17 @@ def logout():
 @app.route('/download/<workoutId>')
 def download(workoutId):
     #re-enable this flash if you can figure out how to make it fade away afer a few seconds
-    #flash('Download started for workoutId: ' + workoutId)
-    
+    flash('Download started for workoutId: ' + workoutId)
+
     #create tempfile and send to client
     temp = tempfile.NamedTemporaryFile()
     try:
-        temp.write(session['garmin_session'].get_workout_string(workoutId=workoutId))
+        workout_string = session['garmin_session'].get_workout_string(workoutId=workoutId)
+        flash(workout_string)
+        temp.write(workout_string)
         temp.seek(0)
+        return send_file(temp.name, attachment_filename=workoutId + ".json", as_attachment=True)
     finally:
-        return send_file(temp.name, attachment_filename=workoutId+".json", as_attachment=True)
         #figure out how to properly close file...
         temp.close()
     
@@ -138,16 +142,15 @@ def scheduledworkouts():
         flash('You need to enter Garmin Connect credentials in order to view scheduled workouts')
         return redirect(url_for('login'))
 
-    result = ""
-    json_obj = ""
+    result = session['garmin_session'].get_schedule()
+    json_obj = json.loads(result)
 
     scheduled_workouts_form = ScheduledWorkoutsForm()
     if request.method == 'POST' and scheduled_workouts_form.validate():
-        flash('DISPLAY FILTERED LIST')
+        flash('IMPLEMENT LIST FILTER')
         return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
                                result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
 
-    flash('DISPLAY FULL LIST')
     return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
                            result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
 

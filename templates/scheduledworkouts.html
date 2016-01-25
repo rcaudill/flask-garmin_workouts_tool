@@ -3,7 +3,7 @@
 
 {% block body %}
 <!--Update navbar-->
-<script>document.getElementById("scheduled").className += "Active";</script>
+<script>document.getElementById("scheduled").className += "dropdown active";</script>
 
 <h3>Scheduled Workouts</h3>
 <div class="col-lg-12">
@@ -14,16 +14,34 @@
         <br>
         <input type="submit" value="Filter by Date"/>
     </form>
-
-    {% for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList'] %}
-    {% if 'ExportableWorkoutSchedule' in i %}
-    {{i['ExportableWorkoutSchedule']['calendarDate'].encode('ascii', 'ignore').decode('ascii')}},
-    {{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii', 'ignore').decode('ascii')}},
-    ({{i['ExportableWorkoutSchedule']['workoutId'].encode('ascii', 'ignore').decode('ascii')}})
-    {% endif %}
-    <br>
-    {% endfor %}
-
+    <table class="table table-striped table-bordered table-hover" style="font-size: 80%;">
+        <tr>
+            <td><b>Date</b></td>
+            <td><b>Plan ID</b></td>
+            <td><b>Workout ID</b></td>
+            <td><b>Workout Name</b></td>
+            <td><b>Delete</b></td>
+        </tr>
+        {% for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList'] %}
+        {% if 'ExportableWorkoutSchedule' in i %}
+        <tr>
+            <td style="width:18%">{{i['ExportableWorkoutSchedule']['calendarDate'].encode('ascii',
+                'ignore').decode('ascii')}}
+            </td>
+            <td style="width:8%">{{i['ExportableWorkoutSchedule']['trainingPlanId']}}</td>
+            <td style="width:10%">{{i['ExportableWorkoutSchedule']['workoutId'].encode('ascii',
+                'ignore').decode('ascii')}}
+            </td>
+            <td style="width:57%">{{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii',
+                'ignore').decode('ascii')}}
+            </td>
+            <td><input type='button'
+                       onclick="location.href='deletescheduledworkout/{{ i['ExportableWorkoutSchedule']['scheduleId']|string }}';"
+                       value='Delete'/></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
     <button id="show-schedule-json">Show Workout List JSON</button>
     <div id="schedule-json-field">
         <textarea name='result' rows='20' cols='80'>{{result}}</textarea>

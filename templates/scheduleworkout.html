@@ -1,0 +1,25 @@
+<!-- Extend layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+<!--Update navbar-->
+<script>document.getElementById("scheduled").className += "dropdown active";</script>
+
+<h3>Schedule a Workout</h3>
+<div class="col-lg-12">
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" action="{{ url_for('scheduleworkout') }}">
+        {{ render_field(schedule_workout_form.workoutId) }}
+        {{ render_field(schedule_workout_form.calendarDate) }}
+        <br>
+        <input type="submit" value="Submit"/>
+    </form>
+
+    <b>Workouts:</b><br>
+    {% for i in json_obj['com.garmin.connect.workout.dto.BaseUserWorkoutListDto']['baseUserWorkouts'] %}
+    {{(i['workoutId']|string).encode('ascii', 'ignore').decode('ascii')}} -
+    ({{i['workoutName'].encode('ascii', 'ignore').decode('ascii')}})
+    <br>
+    {% endfor %}
+</div>
+{% endblock %}

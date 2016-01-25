@@ -6,7 +6,7 @@ from datetime import timedelta
 from flask import Flask, session, render_template, request, flash, redirect, url_for
 from flask import send_file
 from flask.ext.session import Session
-from wtforms import Form, TextAreaField
+from wtforms import Form, TextAreaField, StringField
 from wtforms_html5 import DateField, IntegerField
 
 from garmin_service import *
@@ -24,6 +24,11 @@ class GeneratePlanForm(Form):
 class ScheduledWorkoutsForm(Form):
     start_date = DateField('Start Date')
     end_date = DateField('Finish Date')
+
+
+class ScheduleWorkoutForm(Form):
+    workoutId = StringField('Workout ID')
+    calendarDate = DateField('Schedule Workout on Date')
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -119,6 +124,13 @@ def delete(workoutId):
     return redirect(url_for('index'))
 
 
+@app.route('/deletescheduledworkout/<scheduleId>')
+def deletescheduledworkout(scheduleId):
+    result = session['garmin_session'].delete_scheduled_workout(scheduleId=scheduleId)
+    flash(result)
+    flash('Scheduled workout ' + scheduleId + ' deleted')
+    return redirect(url_for('scheduledworkouts'))
+
 @app.route('/generateplan', methods=['GET', 'POST'])
 def generateplan():
     if 'garmin_session' not in session or session['garmin_session'] is None:
@@ -159,6 +171,25 @@ def scheduledworkouts():
     return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
                            result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
 
+
+@app.route('/scheduleworkout', methods=['GET', 'POST'])
+def scheduleworkout():
+    if 'garmin_session' not in session or session['garmin_session'] is None:
+        # No garmin connect session, redirect to login
+        flash('You need to enter Garmin Connect credentials in order to view scheduled workouts')
+        return redirect(url_for('login'))
+
+    result = session['garmin_session'].get_workouts()
+    json_obj = json.loads(result)
+
+    schedule_workout_form = ScheduleWorkoutForm(request.form)
+    if request.method == 'POST' and schedule_workout_form.validate():
+        result = session['garmin_session'].set_workoutschedule(workoutId=schedule_workout_form.data['workoutId'],
+                                                               calendarDate=schedule_workout_form.data['calendarDate'])
+        flash(result)
+        return render_template('scheduleworkout.html', schedule_workout_form=schedule_workout_form, json_obj=json_obj)
+
+    return render_template('scheduleworkout.html', schedule_workout_form=schedule_workout_form, json_obj=json_obj)
 # Run
 if __name__ == '__main__':
     #logging.basicConfig(filename='error.log',level=logging.DEBUG)

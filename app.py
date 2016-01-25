@@ -1,13 +1,13 @@
 from __future__ import print_function  # In python 2.7
 
 import tempfile
-from datetime import timedelta, date
+from datetime import timedelta
 
 from flask import Flask, session, render_template, request, flash, redirect, url_for
 from flask import send_file
 from flask.ext.session import Session
-from wtforms import Form, TextAreaField, validators
-from wtforms_html5 import DateField, IntegerField, DateRange
+from wtforms import Form, TextAreaField
+from wtforms_html5 import DateField, IntegerField
 
 from garmin_service import *
 
@@ -16,11 +16,10 @@ class UploadForm(Form):
     workout_json = TextAreaField('Workout JSON')
 
 class GeneratePlanForm(Form):
-    cts_heart_rate = IntegerField('CTS Test Heart Rate', [
-        validators.NumberRange(min=120, max=200, message='Heart rate average must be betweek 100 and 200')])
-    start_date = DateField('Plan Start Date',
-                           validators=[validators.DataRequired(), DateRange(date(2016, 1, 1), date(2017, 1, 1))])
-
+    # cts_heart_rate = IntegerField('CTS Test Heart Rate', [validators.NumberRange(min=120, max=200, message='Heart rate average must be betweek 100 and 200')])
+    cts_heart_rate = IntegerField('CTS Test Heart Rate')
+    # start_date = DateField('Plan Start Date', validators=[validators.DataRequired(), DateRange(date(2016, 1, 1), date(2017, 1, 1))])
+    start_date = DateField('Plan Start Date')
 
 class ScheduledWorkoutsForm(Form):
     start_date = DateField('Start Date')
@@ -127,13 +126,13 @@ def generateplan():
         flash('You need to enter Garmin Connect credentials in order to create a workout plan')
         return redirect(url_for('login'))
 
-    generate_plan_form = GeneratePlanForm()
+    generate_plan_form = GeneratePlanForm(request.form)
+
     if request.method == 'POST' and generate_plan_form.validate():
-        flash('Workout plan submitted')
+        flash('Workout plan submitted' + str(generate_plan_form.data['cts_heart_rate']))
         return redirect(url_for('index'))
 
     return render_template('generateplan.html', generate_plan_form=generate_plan_form)
-
 
 @app.route('/scheduledworkouts', methods=['GET', 'POST'])
 def scheduledworkouts():
@@ -142,15 +141,21 @@ def scheduledworkouts():
         flash('You need to enter Garmin Connect credentials in order to view scheduled workouts')
         return redirect(url_for('login'))
 
-    result = session['garmin_session'].get_schedule()
-    json_obj = json.loads(result)
-
-    scheduled_workouts_form = ScheduledWorkoutsForm()
+    scheduled_workouts_form = ScheduledWorkoutsForm(request.form)
     if request.method == 'POST' and scheduled_workouts_form.validate():
-        flash('IMPLEMENT LIST FILTER')
+        result = session['garmin_session'].get_schedule(
+            startCalendarDate=str(scheduled_workouts_form.data['start_date']),
+            endCalendarDate=str(scheduled_workouts_form.data['end_date']))
+        json_obj = json.loads(result)
+        # code for filtering by trainingPlanId
+        # for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList']:
+        #    if i['ExportableWorkoutSchedule']['trainingPlanId']=="XXX":
+        #        i.pop("ExportableWorkoutSchedule")
         return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
                                result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
 
+    result = session['garmin_session'].get_schedule()
+    json_obj = json.loads(result)
     return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
                            result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
 

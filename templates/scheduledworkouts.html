@@ -16,12 +16,14 @@
     </form>
 
     {% for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList'] %}
+    {% if 'ExportableWorkoutSchedule' in i %}
     {{i['ExportableWorkoutSchedule']['calendarDate'].encode('ascii', 'ignore').decode('ascii')}},
     {{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii', 'ignore').decode('ascii')}},
     ({{i['ExportableWorkoutSchedule']['workoutId'].encode('ascii', 'ignore').decode('ascii')}})
+    {% endif %}
     <br>
     {% endfor %}
-    <br>
+
     <button id="show-schedule-json">Show Workout List JSON</button>
     <div id="schedule-json-field">
         <textarea name='result' rows='20' cols='80'>{{result}}</textarea>

@@ -19,20 +19,24 @@
             <td><b>Date</b></td>
             <td><b>Plan ID</b></td>
             <td><b>Workout ID</b></td>
+            <td><b>Schedule ID</b></td>
             <td><b>Workout Name</b></td>
             <td><b>Delete</b></td>
         </tr>
         {% for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList'] %}
         {% if 'ExportableWorkoutSchedule' in i %}
         <tr>
-            <td style="width:18%">{{i['ExportableWorkoutSchedule']['calendarDate'].encode('ascii',
+            <td style="width:20%">{{i['ExportableWorkoutSchedule']['calendarDate'].encode('ascii',
                 'ignore').decode('ascii')}}
             </td>
             <td style="width:8%">{{i['ExportableWorkoutSchedule']['trainingPlanId']}}</td>
             <td style="width:10%">{{i['ExportableWorkoutSchedule']['workoutId'].encode('ascii',
                 'ignore').decode('ascii')}}
             </td>
-            <td style="width:57%">{{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii',
+            <td style="width:12%">{{i['ExportableWorkoutSchedule']['scheduleId'].encode('ascii',
+                'ignore').decode('ascii')}}
+            </td>
+            <td style="width:50%">{{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii',
                 'ignore').decode('ascii')}}
             </td>
             <td><input type='button'

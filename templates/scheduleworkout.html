@@ -14,12 +14,5 @@
         <br>
         <input type="submit" value="Submit"/>
     </form>
-
-    <b>Workouts:</b><br>
-    {% for i in json_obj['com.garmin.connect.workout.dto.BaseUserWorkoutListDto']['baseUserWorkouts'] %}
-    {{(i['workoutId']|string).encode('ascii', 'ignore').decode('ascii')}} -
-    ({{i['workoutName'].encode('ascii', 'ignore').decode('ascii')}})
-    <br>
-    {% endfor %}
 </div>
 {% endblock %}

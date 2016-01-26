@@ -1,12 +1,10 @@
-from __future__ import print_function  # In python 2.7
-
 import tempfile
 from datetime import timedelta
 
 from flask import Flask, session, render_template, request, flash, redirect, url_for
 from flask import send_file
 from flask.ext.session import Session
-from wtforms import Form, TextAreaField, StringField
+from wtforms import Form, TextAreaField, SelectField
 from wtforms_html5 import DateField, IntegerField
 
 from garmin_service import *
@@ -27,7 +25,7 @@ class ScheduledWorkoutsForm(Form):
 
 
 class ScheduleWorkoutForm(Form):
-    workoutId = StringField('Workout ID')
+    workoutId = SelectField('Workout ID')
     calendarDate = DateField('Schedule Workout on Date')
 
 # Initialize the Flask application
@@ -88,7 +86,9 @@ def download(workoutId):
     #create tempfile and send to client
     temp = tempfile.NamedTemporaryFile()
     try:
-        workout_string = session['garmin_session'].get_workout_string(workoutId=workoutId)
+        workout_string = session['garmin_session'].get_workout_string(workoutId=workoutId).encode('ascii',
+                                                                                                  'ignore').decode(
+            'ascii')
         flash(workout_string)
         temp.write(workout_string)
         temp.seek(0)
@@ -122,14 +122,6 @@ def delete(workoutId):
     session['garmin_session'].delete_workout(workoutId=workoutId)
     flash('Workout '+workoutId+' deleted')
     return redirect(url_for('index'))
-
-
-@app.route('/deletescheduledworkout/<scheduleId>')
-def deletescheduledworkout(scheduleId):
-    result = session['garmin_session'].delete_scheduled_workout(scheduleId=scheduleId)
-    flash(result)
-    flash('Scheduled workout ' + scheduleId + ' deleted')
-    return redirect(url_for('scheduledworkouts'))
 
 @app.route('/generateplan', methods=['GET', 'POST'])
 def generateplan():
@@ -181,16 +173,30 @@ def scheduleworkout():
 
     result = session['garmin_session'].get_workouts()
     json_obj = json.loads(result)
-
     schedule_workout_form = ScheduleWorkoutForm(request.form)
+    schedule_workout_form.workoutId.choices = [
+        (str(i['workoutId']), (str(i['workoutId']) + " - " + str(i['workoutName']))) for i in
+        json_obj['com.garmin.connect.workout.dto.BaseUserWorkoutListDto']['baseUserWorkouts']]
+
     if request.method == 'POST' and schedule_workout_form.validate():
         result = session['garmin_session'].set_workoutschedule(workoutId=schedule_workout_form.data['workoutId'],
                                                                calendarDate=schedule_workout_form.data['calendarDate'])
         flash(result)
-        return render_template('scheduleworkout.html', schedule_workout_form=schedule_workout_form, json_obj=json_obj)
 
-    return render_template('scheduleworkout.html', schedule_workout_form=schedule_workout_form, json_obj=json_obj)
-# Run
+    return render_template('scheduleworkout.html', schedule_workout_form=schedule_workout_form)
+
+
+@app.route('/deletescheduledworkout/<scheduleId>')
+def deletescheduledworkout(scheduleId):
+    if 'garmin_session' not in session or session['garmin_session'] is None:
+        # No garmin connect session, redirect to login
+        flash('You need to enter Garmin Connect credentials in order to upload a workout')
+        return redirect(url_for('login'))
+
+    result = session['garmin_session'].delete_scheduled_workout(scheduleId=scheduleId)
+    flash('Scheduled workout ' + scheduleId + ' deleted')
+    return redirect(url_for('scheduledworkouts'))
+
 if __name__ == '__main__':
     #logging.basicConfig(filename='error.log',level=logging.DEBUG)
     app.run(

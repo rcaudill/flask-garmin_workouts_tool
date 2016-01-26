@@ -3,14 +3,14 @@
 
 {% block body %}
 <h3>Login to Garmin Connect</h3>
-  <p>Enter Garmin Connect credentials to get started.</p>
-  <form action="" method="post">
-    <dl>
-      <dt>Username:
-      <dd><input type="text" name="username" value="{{request.form.username }}">
-      <dt>Password:
-      <dd><input type="password" name="password">
-    </dl>
-    <p><input type="submit" value="Login">
-  </form>
+<p>Enter Garmin Connect credentials to get started.</p>
+<form action="" method="post">
+  <dl>
+    <dt>Username:
+    <dd><input type="text" name="username" value="{{request.form.username }}">
+    <dt>Password:
+    <dd><input type="password" name="password">
+  </dl>
+  <p><input type="submit" value="Login">
+</form>
 {% endblock %}

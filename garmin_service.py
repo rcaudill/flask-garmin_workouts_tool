@@ -81,9 +81,11 @@ class GarminService:
                                 params=payload).text
 
     def delete_scheduled_workout(self, scheduleId):
-        return self.session.delete(
-            "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule/" + scheduleId).text
+        payload = {'workoutScheduleId': scheduleId}
+        return self.session.delete("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
+                                   params=payload).text
 
 # gc = GarminService("rcaudill@gmail.com", "")
+# print gc.session.get("https://connect.garmin.com/proxy/workout-service-1.0/json/target_types").text
 # print gc.get_workouts()
-# print gc.get_schedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25")
+# print gc.get_schedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25", includeTP="true")

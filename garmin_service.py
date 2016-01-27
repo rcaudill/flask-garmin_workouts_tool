@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import datetime
 import json
 import re
 
@@ -85,7 +86,33 @@ class GarminService:
         return self.session.delete("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
                                    params=payload).text
 
-# gc = GarminService("rcaudill@gmail.com", "")
+    def schedule_3_day(self, calendarDate):
+        result = ""
+        payload = {'workoutId': 45366345, 'calendarDate': calendarDate}
+        result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
+                                   params=payload).text
+        result += "\n"
+
+        payload = {'workoutId': 45366349, 'calendarDate': str(
+            datetime.datetime.strptime(calendarDate, "%Y-%m-%d").date() + datetime.timedelta(days=1))}
+        result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
+                                   params=payload).text
+        result += "\n"
+
+        payload = {'workoutId': 45366350, 'calendarDate': str(
+            datetime.datetime.strptime(calendarDate, "%Y-%m-%d").date() + datetime.timedelta(days=2))}
+        result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
+                                   params=payload).text
+
+        return result
+
+# gc = GarminService("rcaudill@gmail.com", "qweQWE123")
+# gc.schedule_3_day(workoutId="41283024", calendarDate="2016-01-01")
+
 # print gc.session.get("https://connect.garmin.com/proxy/workout-service-1.0/json/target_types").text
+# print gc.session.get("https://connect.garmin.com/proxy/user-service-1.0/json/user_preferences").text
+# payload = {'key': "test_key", 'value': "test_value"}
+# print gc.session.post("https://connect.garmin.com/proxy/user-service-1.0/json/user_preference",params=payload).text
+# print gc.session.get("https://connect.garmin.com/proxy/user-service-1.0/json/account").text
 # print gc.get_workouts()
-# print gc.get_schedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25", includeTP="true")
+#print gc.get_schedule(startCalendarDate="2016-01-01", endCalendarDate="2016-01-25", includeTP="true")

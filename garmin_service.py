@@ -106,7 +106,7 @@ class GarminService:
 
         return result
 
-# gc = GarminService("rcaudill@gmail.com", "qweQWE123")
+# gc = GarminService("rcaudill@gmail.com", "")
 # gc.schedule_3_day(workoutId="41283024", calendarDate="2016-01-01")
 
 # print gc.session.get("https://connect.garmin.com/proxy/workout-service-1.0/json/target_types").text

@@ -6,6 +6,9 @@
 <script>document.getElementById("scheduled").className += "dropdown active";</script>
 
 <h3>Scheduled Workouts</h3>
+<br>
+<div id='calendar'></div>
+
 <div class="col-lg-12">
     {% from "_formhelpers.html" import render_field %}
     <form method="POST" action="{{ url_for('scheduledworkouts') }}">
@@ -30,18 +33,18 @@
                 'ignore').decode('ascii')}}
             </td>
             <td style="width:8%">{{i['ExportableWorkoutSchedule']['trainingPlanId']}}</td>
-            <td style="width:10%">{{i['ExportableWorkoutSchedule']['workoutId'].encode('ascii',
+            <td style="width:12%">{{i['ExportableWorkoutSchedule']['workoutId'].encode('ascii',
                 'ignore').decode('ascii')}}
             </td>
             <td style="width:12%">{{i['ExportableWorkoutSchedule']['scheduleId'].encode('ascii',
                 'ignore').decode('ascii')}}
             </td>
-            <td style="width:50%">{{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii',
+            <td>{{i['ExportableWorkoutSchedule']['workoutName'].encode('ascii',
                 'ignore').decode('ascii')}}
             </td>
-            <td><input type='button'
-                       onclick="location.href='deletescheduledworkout/{{ i['ExportableWorkoutSchedule']['scheduleId']|string }}';"
-                       value='Delete'/></td>
+            <td style="width:8%"><input type='button'
+                                        onclick="location.href='deletescheduledworkout/{{ i['ExportableWorkoutSchedule']['scheduleId']|string }}';"
+                                        value='Delete'/></td>
         </tr>
         {% endif %}
         {% endfor %}
@@ -53,5 +56,52 @@
 </div>
 
 <script src="{{ url_for('static', filename='text-area-helpers.js') }}"></script>
+
+
+<link href='static/fullcalendar-2.6.0/fullcalendar.css' rel='stylesheet'/>
+<link href='static/fullcalendar-2.6.0/fullcalendar.print.css' rel='stylesheet' media='print'/>
+<script src='static/fullcalendar-2.6.0/lib/moment.min.js'></script>
+<script src='static/fullcalendar-2.6.0/lib/jquery.min.js'></script>
+<script src='static/fullcalendar-2.6.0/fullcalendar.js'></script>
+
+<script>
+	$(document).ready(function() {
+		$('#calendar').fullCalendar({
+			defaultDate: '2016-01-12',
+			editable: true,
+			eventLimit: true, // allow "more" link when too many events
+			events: [
+				{% for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList'] %}
+                {% if 'ExportableWorkoutSchedule' in i %}
+                    {
+                    title: '{{ i['ExportableWorkoutSchedule']['workoutName'].encode('ascii','ignore').decode('ascii') }}',
+                    start: '{{ i['ExportableWorkoutSchedule']['calendarDate'].encode('ascii','ignore').decode('ascii') }}',
+                    url: 'https://connect.garmin.com/proxy/workout-service-1.0/json/workout/{{ i['ExportableWorkoutSchedule']['workoutId'].encode('ascii','ignore').decode('ascii') }}'
+                    },
+                {% endif %}
+                {% endfor %}
+				{
+					title: 'Click for Google',
+					url: 'http://google.com/',
+					start: '2018-01-28'
+				}
+			]
+		});
+
+	});
+
+</script>
+<style>
+    body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+    }
+    #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+    }
+</style>
 
 {% endblock %}

@@ -86,21 +86,35 @@ class GarminService:
         return self.session.delete("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
                                    params=payload).text
 
-    def schedule_3_day(self, calendarDate):
+    def schedule_tctp_ec(self, calendarDate):
         result = ""
-        payload = {'workoutId': 45366345, 'calendarDate': calendarDate}
+        payload = {'workoutId': 45443119, 'calendarDate': calendarDate}
         result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
                                    params=payload).text
         result += "\n"
 
-        payload = {'workoutId': 45366349, 'calendarDate': str(
+        payload = {'workoutId': 45443120, 'calendarDate': str(
             datetime.datetime.strptime(calendarDate, "%Y-%m-%d").date() + datetime.timedelta(days=1))}
         result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
                                    params=payload).text
         result += "\n"
 
-        payload = {'workoutId': 45366350, 'calendarDate': str(
-            datetime.datetime.strptime(calendarDate, "%Y-%m-%d").date() + datetime.timedelta(days=2))}
+        payload = {'workoutId': 45443122, 'calendarDate': str(
+                datetime.datetime.strptime(calendarDate, "%Y-%m-%d").date() + datetime.timedelta(days=3))}
+        result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
+                                   params=payload).text
+
+        result += "\n"
+
+        payload = {'workoutId': 45443123, 'calendarDate': str(
+                datetime.datetime.strptime(calendarDate, "%Y-%m-%d").date() + datetime.timedelta(days=5))}
+        result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
+                                   params=payload).text
+
+        result += "\n"
+
+        payload = {'workoutId': 45443124, 'calendarDate': str(
+                datetime.datetime.strptime(calendarDate, "%Y-%m-%d").date() + datetime.timedelta(days=6))}
         result += self.session.put("https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule",
                                    params=payload).text
 

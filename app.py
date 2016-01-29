@@ -139,21 +139,21 @@ def generateplan():
     return render_template('generateplan.html', generate_plan_form=generate_plan_form)
 
 
-@app.route('/testgenerateplan', methods=['GET', 'POST'])
-def testgenerateplan():
+@app.route('/generateplantctpec', methods=['GET', 'POST'])
+def generateplantctpec():
     if 'garmin_session' not in session or session['garmin_session'] is None:
         # No garmin connect session, redirect to login
-        flash('You need to enter Garmin Connect credentials in order to ...')
+        flash('You need to enter Garmin Connect credentials in order to generate plan')
         return redirect(url_for('login'))
 
     generate_plan_form = GeneratePlanForm(request.form)
 
     if request.method == 'POST' and generate_plan_form.validate():
-        result = session['garmin_session'].schedule_3_day(calendarDate=str(generate_plan_form.data['start_date']))
+        result = session['garmin_session'].schedule_tctp_ec(calendarDate=str(generate_plan_form.data['start_date']))
         flash('Workout plan scheduled')
         return redirect(url_for('scheduledworkouts'))
 
-    return render_template('testgenerateplan.html', generate_plan_form=generate_plan_form)
+    return render_template('generateplantctpec.html', generate_plan_form=generate_plan_form)
 
 @app.route('/scheduledworkouts', methods=['GET', 'POST'])
 def scheduledworkouts():

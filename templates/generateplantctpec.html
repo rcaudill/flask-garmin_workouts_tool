@@ -5,10 +5,10 @@
 <!--Update navbar-->
 <script>document.getElementById("plan").className += "dropdown active";</script>
 
-<h3>Generate a Workout Plan</h3>
+<h3>TCTP Experienced Competitor (Week 1)</h3>
 <div class="col-lg-12">
     {% from "_formhelpers.html" import render_field %}
-    <form method="POST" action="{{ url_for('testgenerateplan') }}">
+    <form method="POST" action="{{ url_for('generateplantctpec') }}">
         {{ render_field(generate_plan_form.start_date) }}
         <br>
         <input type="submit" value="Submit"/>

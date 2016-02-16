@@ -172,13 +172,12 @@ def scheduledworkouts():
         # for i in json_obj['ExportableWorkoutScheduleResult']['workoutScheduleList']:
         #    if i['ExportableWorkoutSchedule']['trainingPlanId']=="XXX":
         #        i.pop("ExportableWorkoutSchedule")
-        return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
-                               result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
+    else:
+        result = session['garmin_session'].get_schedule()
+        json_obj = json.loads(result)
 
-    result = session['garmin_session'].get_schedule()
-    json_obj = json.loads(result)
     return render_template('scheduledworkouts.html', scheduled_workouts_form=scheduled_workouts_form,
-                           result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj)
+                           result=result.encode('ascii', 'ignore').decode('ascii'), json_obj=json_obj, today=datetime.datetime.now().strftime('%Y-%m-%d'))
 
 
 @app.route('/scheduleworkout', methods=['GET', 'POST'])
